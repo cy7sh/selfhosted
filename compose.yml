@@ -106,3 +106,16 @@ services:
     volumes:
       - /opt/freshrss/data:/var/www/FreshRSS/data
       - /opt/freshrss/extensions:/var/www/FreshRSS/extensions
+
+  anki-server:
+    build:
+      context: .
+      dockerfile: anki.Dockerfile
+    container_name: anki-server
+    restart: always
+    environment:
+      SYNC_USER1: ${ANKI_USER}
+      SYNC_HOST: 0.0.0.0
+      SYNC_PORT: 80
+      SYNC_IP_HEADER: XRealIp
+

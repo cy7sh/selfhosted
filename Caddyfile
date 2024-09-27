@@ -91,3 +91,19 @@ rss.trashcan.app {
 		header_up X-Real-IP {client_ip}
 	}
 }
+
+anki.trashcan.app {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+	tls /data/cert.pem /data/key.pem
+	encode gzip zstd
+
+	reverse_proxy anki-server:80 {
+		header_up X-Real-IP {client_ip}
+	}
+}
