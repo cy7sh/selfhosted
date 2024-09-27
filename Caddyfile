@@ -1,0 +1,93 @@
+{
+	auto_https ignore_loaded_certs
+
+	servers {
+		trusted_proxies cloudflare {
+			interval 1h
+			timeout 15s
+		}
+	}
+}
+
+pass.trashcan.app {
+  log {
+    level INFO
+    output file {$LOG_FILE} {
+      roll_size 10MB
+      roll_keep 10
+    }
+  }
+	tls /data/cert.pem /data/key.pem
+
+  encode zstd gzip
+
+  # Proxy everything Rocket
+  reverse_proxy vaultwarden:80 {
+		header_up X-Real-IP {client_ip}
+  }
+}
+
+dns.trashcan.app {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+#	tls /data/cert.pem /data/key.pem
+	tls contact@trashcan.app
+	encode gzip zstd
+
+	reverse_proxy adguard:80 {
+		header_up X-Real-IP {client_ip}
+	}
+}
+
+link.trashcan.app {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+	tls /data/cert.pem /data/key.pem
+	encode gzip zstd
+
+	reverse_proxy linkding:9090 {
+		header_up X-Real-IP {client_ip}
+	}
+}
+
+git.trashcan.app {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+	tls /data/cert.pem /data/key.pem
+	encode gzip zstd
+
+	reverse_proxy forgejo:3000 {
+		header_up X-Real-IP {client_ip}
+	}
+}
+
+rss.trashcan.app {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+	tls /data/cert.pem /data/key.pem
+	encode gzip zstd
+
+	reverse_proxy freshrss:80 {
+		header_up X-Real-IP {client_ip}
+	}
+}

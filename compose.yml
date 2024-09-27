@@ -1,0 +1,108 @@
+networks:
+  default:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 2001:db8::/64
+        - subnet: 172.28.0.0/16
+
+services:
+  vaultwarden:
+    image: vaultwarden/server
+    container_name: vaultwarden
+    restart: always
+    environment:
+      DOMAIN: "https://pass.trashcan.app"  # Your domain; vaultwarden needs to know it's https to work properly with attachments
+      SIGNUPS_ALLOWED: "true"
+      SMTP_HOST: smtp.mail.me.com
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_PORT: 587
+      SMTP_SECURITY: starttls
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      ADMIN_TOKEN: ${VAULTWARDEN_ADMIN_TOKEN}
+      LOG_FILE: /data/vaultwarden.log
+      TZ: America/Toronto
+      PUSH_ENABLED: true
+      PUSH_INSTALLATION_ID: ${PUSH_INSTALLATION_ID}
+      PUSH_INSTALLATION_KEY: ${PUSH_INSTALLATION_KEY}
+    volumes:
+      - /vw-data:/data
+
+  caddy:
+    build:
+      context: .
+      dockerfile: caddy.Dockerfile
+    container_name: caddy
+    restart: always
+    ports:
+      - 80:80  # Needed for the ACME HTTP-01 challenge.
+      - 443:443
+      - 443:443/udp # Needed for HTTP/3.
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-config:/config
+      - ./caddy-data:/data
+    environment:
+      LOG_FILE: "/data/access.log"
+
+  vaultwarden-backup:
+    image: ttionya/vaultwarden-backup
+    container_name: vaultwarden-backup
+    restart: always
+    environment:
+      RCLONE_REMOTE_DIR: /
+      TIMEZONE: America/Toronto
+      ZIP_TYPE: 7z
+    volumes:
+      - /vw-data:/bitwarden/data/:ro
+      - /home/crashtan/.config/rclone/:/config/rclone/
+
+  adguard:
+    image: adguard/adguardhome
+    container_name: adguard
+    restart: always
+    environment:
+      TZ: America/Toronto
+    ports:
+      - 53:53
+      - 53:53/udp
+      - 853:853
+      - 853:853/udp
+    volumes:
+      - /home/crashtan/adguardhome/work:/opt/adguardhome/work
+      - /home/crashtan/adguardhome/conf:/opt/adguardhome/conf
+
+  linkding:
+    image: sissbruecker/linkding:latest
+    container_name: linkding
+    restart: always
+    volumes:
+      - /opt/linkding/data:/etc/linkding/data
+
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:8
+    container_name: forgejo
+    restart: always
+    environment:
+      USER_UID: 1001
+      USER_GID: 1001
+    ports:
+      - 127.0.0.1:2222:22
+    volumes:
+      - /opt/forgejo:/data
+      - /home/git/.ssh:/data/git/.ssh
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  freshrss:
+    image: freshrss/freshrss
+    container_name: freshrss
+    restart: always
+    environment:
+      TZ: America/Toronto
+      CRON_MIN: 1,31
+    volumes:
+      - /opt/freshrss/data:/var/www/FreshRSS/data
+      - /opt/freshrss/extensions:/var/www/FreshRSS/extensions
