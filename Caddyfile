@@ -1,5 +1,4 @@
 {
-	auto_https ignore_loaded_certs
 	ocsp_stapling off
 
 	servers {
@@ -10,25 +9,7 @@
 	}
 }
 
-pass.trashcan.app {
-  log {
-    level INFO
-    output file {$LOG_FILE} {
-      roll_size 10MB
-      roll_keep 10
-    }
-  }
-	tls /data/cert.pem /data/key.pem
-
-  encode zstd gzip
-
-  # Proxy everything Rocket
-  reverse_proxy vaultwarden:80 {
-		header_up X-Real-IP {client_ip}
-  }
-}
-
-dns.trashcan.app {
+pass.cy7.sh {
 	log {
 		level INFO
 		output file {$LOG_FILE} {
@@ -36,16 +17,33 @@ dns.trashcan.app {
 			roll_keep 10
 		}
 	}
-#	tls /data/cert.pem /data/key.pem
-	tls contact@trashcan.app
+	tls /data/cert_cy7.pem /data/key_cy7.pem
+
+	encode zstd gzip
+
+	# Proxy everything Rocket
+	reverse_proxy vaultwarden:80 {
+		header_up X-Real-IP {client_ip}
+	}
+}
+
+dns.cy7.sh {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
 	encode gzip zstd
+	tls /data/cert_cy7.pem /data/key_cy7.pem
 
 	reverse_proxy adguard:80 {
 		header_up X-Real-IP {client_ip}
 	}
 }
 
-link.trashcan.app {
+link.cy7.sh {
 	log {
 		level INFO
 		output file {$LOG_FILE} {
@@ -54,6 +52,7 @@ link.trashcan.app {
 		}
 	}
 	tls /data/cert.pem /data/key.pem
+	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode gzip zstd
 
 	reverse_proxy linkding:9090 {
@@ -61,7 +60,7 @@ link.trashcan.app {
 	}
 }
 
-git.trashcan.app {
+anki.cy7.sh {
 	log {
 		level INFO
 		output file {$LOG_FILE} {
@@ -70,22 +69,7 @@ git.trashcan.app {
 		}
 	}
 	tls /data/cert.pem /data/key.pem
-	encode gzip zstd
-
-	reverse_proxy forgejo:3000 {
-		header_up X-Real-IP {client_ip}
-	}
-}
-
-anki.trashcan.app {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	tls /data/cert.pem /data/key.pem
+	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode gzip zstd
 
 	reverse_proxy anki-server:80 {
