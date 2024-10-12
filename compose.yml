@@ -13,7 +13,7 @@ services:
     container_name: vaultwarden
     restart: always
     environment:
-      DOMAIN: "https://pass.trashcan.app"  # Your domain; vaultwarden needs to know it's https to work properly with attachments
+      DOMAIN: "https://pass.trashcan.app"
       SIGNUPS_ALLOWED: "true"
       SMTP_HOST: smtp.mail.me.com
       SMTP_FROM: ${SMTP_FROM}
@@ -37,7 +37,7 @@ services:
     container_name: caddy
     restart: always
     ports:
-      - 80:80  # Needed for the ACME HTTP-01 challenge.
+      - 80:80
       - 443:443
       - 443:443/udp # Needed for HTTP/3.
     volumes:
@@ -46,18 +46,6 @@ services:
       - ./caddy-data:/data
     environment:
       LOG_FILE: "/data/access.log"
-
-  vaultwarden-backup:
-    image: ttionya/vaultwarden-backup
-    container_name: vaultwarden-backup
-    restart: always
-    environment:
-      RCLONE_REMOTE_DIR: /
-      TIMEZONE: America/Toronto
-      ZIP_TYPE: 7z
-    volumes:
-      - /vw-data:/bitwarden/data/:ro
-      - /home/crashtan/.config/rclone/:/config/rclone/
 
   adguard:
     image: adguard/adguardhome
@@ -78,6 +66,8 @@ services:
     image: sissbruecker/linkding:latest
     container_name: linkding
     restart: always
+    environment:
+      LD_LOG_X_FORWARDED_FOR: True
     volumes:
       - /opt/linkding/data:/etc/linkding/data
 
@@ -96,17 +86,6 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-  freshrss:
-    image: freshrss/freshrss
-    container_name: freshrss
-    restart: always
-    environment:
-      TZ: America/Toronto
-      CRON_MIN: 1,31
-    volumes:
-      - /opt/freshrss/data:/var/www/FreshRSS/data
-      - /opt/freshrss/extensions:/var/www/FreshRSS/extensions
-
   anki-server:
     build:
       context: .
@@ -118,4 +97,34 @@ services:
       SYNC_HOST: 0.0.0.0
       SYNC_PORT: 80
       SYNC_IP_HEADER: XRealIp
+      SYNC_BASE: /data
+    volumes:
+      - /opt/anki:/data
 
+  miniflux:
+    image: miniflux/miniflux:latest
+    container_name: miniflux
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://miniflux:secret@db/miniflux?sslmode=disable
+      RUN_MIGRATIONS: 1
+      CREATE_ADMIN: 1
+      ADMIN_USERNAME: cy
+      ADMIN_PASSWORD: ${MINIFLUX_PASS}
+      BASE_URL: https://rss.cy7.sh/
+      HTTPS: on
+ 
+  db:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: miniflux
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: miniflux
+    volumes:
+      - /opt/miniflux:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      interval: 10s
