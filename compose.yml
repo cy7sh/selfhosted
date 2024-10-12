@@ -116,7 +116,7 @@ services:
       ADMIN_PASSWORD: ${MINIFLUX_PASS}
       BASE_URL: https://rss.cy7.sh/
       HTTPS: on
- 
+
   miniflux_db:
     image: postgres:15
     container_name: miniflux_db
@@ -130,3 +130,10 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "miniflux"]
       interval: 10s
+
+  blog:
+    image: klakegg/hugo:latest
+    container_name: blog
+    restart: on-failure
+    volumes:
+      - ./website:/src
