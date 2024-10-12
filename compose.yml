@@ -104,11 +104,12 @@ services:
   miniflux:
     image: miniflux/miniflux:latest
     container_name: miniflux
+    restart: always
     depends_on:
-      db:
+      miniflux_db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://miniflux:secret@db/miniflux?sslmode=disable
+      DATABASE_URL: postgres://miniflux:secret@miniflux_db/miniflux?sslmode=disable
       RUN_MIGRATIONS: 1
       CREATE_ADMIN: 1
       ADMIN_USERNAME: cy
@@ -116,9 +117,10 @@ services:
       BASE_URL: https://rss.cy7.sh/
       HTTPS: on
  
-  db:
+  miniflux_db:
     image: postgres:15
-    container_name: postgres
+    container_name: miniflux_db
+    restart: always
     environment:
       POSTGRES_USER: miniflux
       POSTGRES_PASSWORD: secret
