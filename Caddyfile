@@ -35,7 +35,7 @@ dns.cy7.sh {
 			roll_keep 10
 		}
 	}
-	encode gzip zstd
+	encode zstd gzip
 	tls /data/cert_cy7.pem /data/key_cy7.pem
 
 	reverse_proxy adguard:80 {
@@ -53,7 +53,7 @@ link.cy7.sh {
 	}
 	tls /data/cert.pem /data/key.pem
 	tls /data/cert_cy7.pem /data/key_cy7.pem
-	encode gzip zstd
+	encode zstd gzip
 
 	reverse_proxy linkding:9090 {
 		header_up X-Forwarded-For {client_ip}
@@ -70,7 +70,7 @@ anki.cy7.sh {
 	}
 	tls /data/cert.pem /data/key.pem
 	tls /data/cert_cy7.pem /data/key_cy7.pem
-	encode gzip zstd
+	encode zstd gzip
 
 	reverse_proxy anki-server:80 {
 		header_up X-Real-IP {client_ip}
@@ -86,7 +86,7 @@ git.cy7.sh {
 		}
 	}
 	tls /data/cert_cy7.pem /data/key_cy7.pem
-	encode gzip zstd
+	encode zstd gzip
 
 	reverse_proxy forgejo:3000 {
 		header_up X-Real-IP {client_ip}
@@ -102,9 +102,32 @@ rss.cy7.sh {
 		}
 	}
 	tls /data/cert_cy7.pem /data/key_cy7.pem
-	encode gzip zstd
+	encode zstd gzip
 
 	reverse_proxy miniflux:8080 {
 		header_up X-Real-IP {client_ip}
 	}
+}
+
+cy7.sh {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+	tls /data/cert_cy7.pem /data/key_cy7.pem
+	encode zstd gzip
+
+	root /blogroot
+	file_server
+
+	# rss feed
+	redir /rss /index.xml
+	redir /feed /index.xml
+}
+
+www.cy7.sh {
+	redir https://cy7.sh{uri} permanent
 }

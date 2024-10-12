@@ -44,6 +44,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy-config:/config
       - ./caddy-data:/data
+      - ./website/public:/blogroot
     environment:
       LOG_FILE: "/data/access.log"
 
