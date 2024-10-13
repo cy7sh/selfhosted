@@ -39,7 +39,7 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 443:443/udp # Needed for HTTP/3.
+      - 443:443/udp
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy-config:/config
@@ -138,3 +138,31 @@ services:
     restart: on-failure
     volumes:
       - ./website:/src
+
+  akkoma_db:
+    image: akkoma_db:latest
+    build: ./akkoma/docker-resources/database
+    shm_size: 1gb
+    container_name: akkoma_db
+    restart: always
+    user: 1000:1000
+    environment:
+      POSTGRES_DB: akkoma
+      POSTGRES_USER: akkoma
+      POSTGRES_PASSWORD: akkoma
+    env_file:
+      - ./akkoma/.env
+    volumes:
+      - ./akkoma/pgdata:/var/lib/postgresql/data
+  
+  akkoma:
+    image: akkoma:latest
+    build: ./akkoma
+    container_name: akkoma
+    restart: always
+    environment:
+      DB_HOST: akkoma_db
+    env_file:
+      - ./akkoma/.env
+    volumes:
+      - ./akkoma:/opt/akkoma

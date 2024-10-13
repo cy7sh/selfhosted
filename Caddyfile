@@ -109,6 +109,22 @@ rss.cy7.sh {
 	}
 }
 
+akkoma.cy7.sh {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+	tls /data/cert_cy7.pem /data/key_cy7.pem
+	encode zstd gzip
+
+	reverse_proxy akkoma:4000 {
+		header_up X-Real-IP {client_ip}
+	}
+}
+
 cy7.sh {
 	log {
 		level INFO
