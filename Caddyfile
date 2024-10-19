@@ -2,10 +2,7 @@
 	ocsp_stapling off
 
 	servers {
-		trusted_proxies cloudflare {
-			interval 1h
-			timeout 15s
-		}
+		trusted_proxies static private_ranges
 	}
 }
 
@@ -51,7 +48,6 @@ link.cy7.sh {
 			roll_keep 10
 		}
 	}
-	tls /data/cert.pem /data/key.pem
 	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode zstd gzip
 
@@ -68,7 +64,6 @@ anki.cy7.sh {
 			roll_keep 10
 		}
 	}
-	tls /data/cert.pem /data/key.pem
 	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode zstd gzip
 
@@ -109,7 +104,7 @@ rss.cy7.sh {
 	}
 }
 
-akkoma.cy7.sh {
+soc.cy7.sh {
 	log {
 		level INFO
 		output file {$LOG_FILE} {
@@ -120,7 +115,26 @@ akkoma.cy7.sh {
 	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode zstd gzip
 
-	reverse_proxy akkoma:4000 {
+	reverse_proxy gotosocial:8080 {
+		header_up X-Real-IP {client_ip}
+	}
+}
+
+x.cy7.sh {
+	log {
+		level INFO
+		output file {$LOG_FILE} {
+			roll_size 10MB
+			roll_keep 10
+		}
+	}
+	basic_auth {
+		cy $2a$14$y58ZvBpCsr6FvzjusxqDvuZNMTdiD8FBq4nDbscc4Rkfi13USdTaG
+	}
+	tls /data/cert_cy7.pem /data/key_cy7.pem
+	encode zstd gzip
+
+	reverse_proxy searxng:8080 {
 		header_up X-Real-IP {client_ip}
 	}
 }
@@ -142,6 +156,11 @@ cy7.sh {
 	# rss feed
 	redir /rss /index.xml
 	redir /feed /index.xml
+
+	# mastodon
+	redir /.well-known/host-meta* https://soc.cy7.sh{uri} permanent
+	redir /.well-known/webfinger* https://soc.cy7.sh{uri} permanent
+	redir /.well-known/nodeinfo* https://soc.cy7.sh{uri} permanent
 }
 
 www.cy7.sh {

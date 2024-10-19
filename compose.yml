@@ -4,7 +4,7 @@ networks:
     enable_ipv6: true
     ipam:
       config:
-        - subnet: 2001:db8::/64
+        - subnet: fdae:7bc2:9d65:c579::/64
         - subnet: 172.28.0.0/16
 
 services:
@@ -31,9 +31,7 @@ services:
       - /vw-data:/data
 
   caddy:
-    build:
-      context: .
-      dockerfile: caddy.Dockerfile
+    image: caddy:2
     container_name: caddy
     restart: always
     ports:
@@ -107,10 +105,10 @@ services:
     container_name: miniflux
     restart: always
     depends_on:
-      miniflux_db:
+      db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://miniflux:secret@miniflux_db/miniflux?sslmode=disable
+      DATABASE_URL: postgres://miniflux:secret@db/miniflux?sslmode=disable
       RUN_MIGRATIONS: 1
       CREATE_ADMIN: 1
       ADMIN_USERNAME: cy
@@ -118,9 +116,9 @@ services:
       BASE_URL: https://rss.cy7.sh/
       HTTPS: on
 
-  miniflux_db:
+  db:
     image: postgres:15
-    container_name: miniflux_db
+    container_name: db
     restart: always
     environment:
       POSTGRES_USER: miniflux
@@ -139,30 +137,32 @@ services:
     volumes:
       - ./website:/src
 
-  akkoma_db:
-    image: akkoma_db:latest
-    build: ./akkoma/docker-resources/database
-    shm_size: 1gb
-    container_name: akkoma_db
+  gotosocial:
+    image: superseriousbusiness/gotosocial:latest
+    container_name: gotosocial
     restart: always
     user: 1000:1000
+    command: ["--config-path", "/gotosocial/config.yml"]
     environment:
-      POSTGRES_DB: akkoma
-      POSTGRES_USER: akkoma
-      POSTGRES_PASSWORD: akkoma
-    env_file:
-      - ./akkoma/.env
+      TZ: America/Toronto
     volumes:
-      - ./akkoma/pgdata:/var/lib/postgresql/data
-  
-  akkoma:
-    image: akkoma:latest
-    build: ./akkoma
-    container_name: akkoma
+      - $HOME/gotosocial:/gotosocial/storage
+      - ./gotosocial.yml:/gotosocial/config.yml:ro
+        
+  searxng:
+    image: searxng/searxng
+    container_name: searxng
     restart: always
     environment:
-      DB_HOST: akkoma_db
-    env_file:
-      - ./akkoma/.env
+      BASE_UR: "BASE_URL=https://x.cy7.sh/"
+      INSTANCE_NAME: "x.cy7.sh"
     volumes:
-      - ./akkoma:/opt/akkoma
+      - $HOME/searxng:/etc/searxng
+
+  redis:
+    image: redis:7-bookworm
+    container_name: redis
+    restart: always
+    command: ["redis-server", "--save", "60 1", "--loglevel", "warning"]
+    volumes:
+      - $HOME/redis:/data
