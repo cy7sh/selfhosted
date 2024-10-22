@@ -70,21 +70,6 @@ services:
     volumes:
       - /opt/linkding/data:/etc/linkding/data
 
-  forgejo:
-    image: codeberg.org/forgejo/forgejo:8
-    container_name: forgejo
-    restart: always
-    environment:
-      USER_UID: 1001
-      USER_GID: 1001
-    ports:
-      - 127.0.0.1:2222:22
-    volumes:
-      - /opt/forgejo:/data
-      - /home/git/.ssh:/data/git/.ssh
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-
   anki-server:
     build:
       context: .
