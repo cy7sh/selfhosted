@@ -1,6 +1,4 @@
 {
-	ocsp_stapling off
-
 	servers {
 		trusted_proxies static private_ranges
 	}
@@ -14,7 +12,6 @@ pass.cy7.sh {
 			roll_keep 10
 		}
 	}
-	tls /data/cert_cy7.pem /data/key_cy7.pem
 
 	encode zstd gzip
 
@@ -33,7 +30,6 @@ dns.cy7.sh {
 		}
 	}
 	encode zstd gzip
-	tls /data/cert_cy7.pem /data/key_cy7.pem
 
 	reverse_proxy adguard:80 {
 		header_up X-Real-IP {client_ip}
@@ -48,7 +44,6 @@ link.cy7.sh {
 			roll_keep 10
 		}
 	}
-	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode zstd gzip
 
 	reverse_proxy linkding:9090 {
@@ -64,7 +59,6 @@ anki.cy7.sh {
 			roll_keep 10
 		}
 	}
-	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode zstd gzip
 
 	reverse_proxy anki-server:80 {
@@ -80,7 +74,6 @@ git.cy7.sh {
 			roll_keep 10
 		}
 	}
-	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode zstd gzip
 
 	reverse_proxy forgejo:3000 {
@@ -96,7 +89,6 @@ rss.cy7.sh {
 			roll_keep 10
 		}
 	}
-	tls /data/cert_cy7.pem /data/key_cy7.pem
 	encode zstd gzip
 
 	reverse_proxy miniflux:8080 {
