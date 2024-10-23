@@ -66,21 +66,6 @@ anki.cy7.sh {
 	}
 }
 
-git.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	encode zstd gzip
-
-	reverse_proxy forgejo:3000 {
-		header_up X-Real-IP {client_ip}
-	}
-}
-
 rss.cy7.sh {
 	log {
 		level INFO

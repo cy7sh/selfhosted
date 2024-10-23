@@ -14,13 +14,6 @@ services:
     restart: always
     environment:
       DOMAIN: "https://pass.cy.sh"
-      SIGNUPS_ALLOWED: "true"
-      SMTP_HOST: smtp.mail.me.com
-      SMTP_FROM: ${SMTP_FROM}
-      SMTP_PORT: 587
-      SMTP_SECURITY: starttls
-      SMTP_USERNAME: ${SMTP_USERNAME}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
       ADMIN_TOKEN: ${VAULTWARDEN_ADMIN_TOKEN}
       LOG_FILE: /data/vaultwarden.log
       TZ: America/Toronto
@@ -58,8 +51,8 @@ services:
       - 853:853
       - 853:853/udp
     volumes:
-      - /home/crashtan/adguardhome/work:/opt/adguardhome/work
-      - /home/crashtan/adguardhome/conf:/opt/adguardhome/conf
+      - /home/crash/adguardhome/work:/opt/adguardhome/work
+      - /home/crash/adguardhome/conf:/opt/adguardhome/conf
 
   linkding:
     image: sissbruecker/linkding:latest
@@ -135,20 +128,6 @@ services:
   #   healthcheck:
   #     disable: false
 
-  # immich-machine-learning:
-  #   container_name: immich_machine_learning
-  #   image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
-  #   volumes:
-  #     - model-cache:/cache
-  #   restart: always
-  #   environment:
-  #     DB_PASSWORD: postgres
-  #     DB_USERNAME: postgres
-  #     DB_DATABASE_NAME: immich
-  #     DB_HOSTNAME: immich_db
-  #   healthcheck:
-  #     disable: false
-
   # redis:
   #   container_name: immich_redis
   #   image: docker.io/redis:6.2-alpine@sha256:2ba50e1ac3a0ea17b736ce9db2b0a9f6f8b85d4c27d5f5accc6a416d8f42c6d5
@@ -188,6 +167,3 @@ services:
   #       'wal_compression=on',
   #     ]
   #   restart: always
-
-# volumes:
-  # model-cache:
