@@ -114,16 +114,15 @@ services:
     volumes:
       - ${IMMICH_UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
-    env_file:
-      - .env
     environment:
       DB_PASSWORD: postgres
       DB_USERNAME: postgres
       DB_DATABASE_NAME: immich
       DB_HOSTNAME: immich_db
+      # IMMICH_WORKERS_INCLUDE: api
     depends_on:
-      - redis
       - immich_db
+      - redis
     restart: always
     healthcheck:
       disable: false
@@ -168,4 +167,6 @@ services:
         '-c',
         'wal_compression=on',
       ]
+    # ports:
+    #   - 5432:5432
     restart: always
