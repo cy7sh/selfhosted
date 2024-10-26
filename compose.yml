@@ -48,8 +48,6 @@ services:
     ports:
       - 53:53
       - 53:53/udp
-      - 853:853
-      - 853:853/udp
     volumes:
       - /home/crash/adguardhome/work:/opt/adguardhome/work
       - /home/crash/adguardhome/conf:/opt/adguardhome/conf
@@ -126,8 +124,6 @@ services:
     restart: always
     healthcheck:
       disable: false
-    ports:
-      - 2283:2283
 
   redis:
     container_name: immich_redis
@@ -167,6 +163,4 @@ services:
         '-c',
         'wal_compression=on',
       ]
-    # ports:
-    #   - 5432:5432
     restart: always
