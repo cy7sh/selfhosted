@@ -15,7 +15,6 @@ pass.cy7.sh {
 
 	encode zstd gzip
 
-	# Proxy everything Rocket
 	reverse_proxy vaultwarden:80 {
 		header_up X-Real-IP {client_ip}
 	}
@@ -48,21 +47,6 @@ link.cy7.sh {
 
 	reverse_proxy linkding:9090 {
 		header_up X-Forwarded-For {client_ip}
-	}
-}
-
-anki.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	encode zstd gzip
-
-	reverse_proxy anki-server:80 {
-		header_up X-Real-IP {client_ip}
 	}
 }
 
