@@ -39,6 +39,16 @@ services:
     environment:
       LOG_FILE: "/data/access.log"
 
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    environment:
+      TZ: America/Toronto
+      SERVER_DNS: rss.cy7.sh
+    volumes:
+      - /opt/freshrss/data:/var/www/FreshRSS/data
+      - /opt/freshrss/extensions:/var/www/FreshRSS/extensions
+
   adguard:
     image: adguard/adguardhome
     container_name: adguard
@@ -61,36 +71,6 @@ services:
       nofile:
         soft: 1048576
         hard: 1048576
-
-  miniflux:
-    image: miniflux/miniflux:latest
-    container_name: miniflux
-    restart: always
-    depends_on:
-      miniflux_db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgres://miniflux:secret@miniflux_db/miniflux?sslmode=disable
-      RUN_MIGRATIONS: 1
-      CREATE_ADMIN: 1
-      ADMIN_USERNAME: cy
-      ADMIN_PASSWORD: ${MINIFLUX_PASS}
-      BASE_URL: https://rss.cy7.sh/
-      HTTPS: on
-
-  miniflux_db:
-    image: postgres:15
-    container_name: miniflux_db
-    restart: always
-    environment:
-      POSTGRES_USER: miniflux
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: miniflux
-    volumes:
-      - /opt/miniflux:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "miniflux"]
-      interval: 10s
 
   immich-server:
     container_name: immich_server

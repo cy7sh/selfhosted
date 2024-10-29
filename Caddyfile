@@ -60,7 +60,7 @@ rss.cy7.sh {
 	}
 	encode zstd gzip
 
-	reverse_proxy miniflux:8080 {
+	reverse_proxy freshrss:80 {
 		header_up X-Real-IP {client_ip}
 	}
 }

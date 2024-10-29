@@ -9,8 +9,6 @@ rsync=de3911@de3911.rsync.net
 
 echo "backing up immich_db"
 docker exec -t immich_db pg_dumpall --clean --if-exists --username=postgres | gzip > /home/cy/immich_dump.sql.gz
-echo "backing up miniflux_db"
-docker exec -t miniflux_db pg_dumpall --clean --if-exists --username=miniflux | gzip > /home/cy/miniflux_dump.sql.gz
 echo "backing up forgejo_db"
 docker exec -t forgejo_db pg_dumpall --clean --if-exists --username=forgejo | gzip > /home/cy/forgejo_dump.sql.gz
 
