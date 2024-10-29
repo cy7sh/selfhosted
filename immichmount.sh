@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export PASSWORD_STORE_DIR=~/lab/vault/password-store
 export RCLONE_CONFIG_PASS=$(pass show rclone/crashtan)
+config=/home/cy/.config/rclone/rclone.conf
 
-sudo -E rclone mount --config /home/crash/.config/rclone/rclone.conf --daemon --vfs-cache-mode writes photos: /mnt/photos
+sudo -E rclone mount --config $config --daemon --vfs-cache-mode writes photos: /mnt/photos
