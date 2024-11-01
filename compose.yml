@@ -42,6 +42,7 @@ services:
   freshrss:
     image: freshrss/freshrss:latest
     container_name: freshrss
+    restart: always
     environment:
       TZ: America/Toronto
       SERVER_DNS: rss.cy7.sh
