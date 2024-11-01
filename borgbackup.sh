@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 crash_passwd=$(pass borg/crash)
 immich_passwd=$(pass borg/immich)
