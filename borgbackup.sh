@@ -29,7 +29,7 @@ sudo -E $borg create --progress -sx --exclude-from borgback_exclude --exclude-ca
 
 sudo -E $borg prune --keep-within 2d --keep-daily 7 --keep-weekly 52 --keep-yearly 10 --stats $rsync:borg/crash
 
-echo "uploading imich to borg"
-export BORG_PASSPHRASE=$immich_passwd
-sudo -E $borg create --noxattrs --noacls --progress -sx $rsync:borg/immich::immich-{now:%Y-%m-%dT%H:%M} /mnt/photos/immich
-sudo -E $borg prune --keep-within 2d --keep-daily 7 --keep-weekly 52 --keep-yearly 10 --stats $rsync:borg/immich
+#echo "uploading imich to borg"
+#export BORG_PASSPHRASE=$immich_passwd
+#sudo -E $borg create --noxattrs --noacls --progress -sx $rsync:borg/immich::immich-{now:%Y-%m-%dT%H:%M} /mnt/photos/immich
+#sudo -E $borg prune --keep-within 2d --keep-daily 7 --keep-weekly 52 --keep-yearly 10 --stats $rsync:borg/immich
