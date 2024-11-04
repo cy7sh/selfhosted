@@ -18,6 +18,8 @@ echo "backup up linkding"
 docker exec -t linkding python manage.py full_backup /etc/linkding/data/backup.zip
 echo "backing up freshrss"
 docker exec -t freshrss "./cli/db-backup.php"
+echo "backing up vaultwarden"
+sudo sqlite3 /vw-data/db.sqlite3 ".backup '/home/cy/vaultwarden_db-$(date '+%Y%m%d-%H%M').sqlite3'"
 
 echo "uploading to borg"
 sudo -E $borg create --progress -sx --exclude-from borgback_exclude --exclude-caches $rsync:borg/crash::{hostname}-{now:%Y-%m-%dT%H:%M} \
