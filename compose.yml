@@ -60,6 +60,19 @@ services:
       - /home/cy/adguardhome/work:/opt/adguardhome/work
       - /home/cy/adguardhome/conf:/opt/adguardhome/conf
 
+  linkding:
+    image: sissbruecker/linkding:latest
+    container_name: linkding
+    restart: always
+    environment:
+      LD_LOG_X_FORWARDED_FOR: True
+    volumes:
+      - /opt/linkding/data:/etc/linkding/data
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
+
   immich-server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
