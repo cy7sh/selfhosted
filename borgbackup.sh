@@ -14,8 +14,6 @@ echo "backing up immich_db"
 docker exec -t immich_db pg_dumpall --clean --if-exists --username=postgres | gzip > /home/cy/immich_dump.sql.gz
 echo "backing up forgejo_db"
 docker exec -t forgejo_db pg_dumpall --clean --if-exists --username=forgejo | gzip > /home/cy/forgejo_dump.sql.gz
-echo "backup up linkding"
-docker exec -t linkding python manage.py full_backup /etc/linkding/data/backup.zip
 echo "backing up freshrss"
 docker exec -t freshrss "./cli/db-backup.php"
 echo "backing up vaultwarden"
