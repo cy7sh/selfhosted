@@ -1,3 +1,0 @@
-[submodule "vault"]
-	path = vault
-	url = git@github.com:cy7sh/vault.git
