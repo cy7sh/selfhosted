@@ -94,3 +94,20 @@ git.cy7.sh {
 		header_up X-Real-IP {client_ip}
 	}
 }
+
+matrix.cy7.sh {
+  reverse_proxy /_matrix/* homeserver:8448 {
+    header_up Host {host}
+    header_up X-Real-IP {client_ip}
+    header_up X-Forwarded-For {client_ip}
+    header_up X-Forwarded-Proto {scheme}
+    transport http {
+      read_buffer 8192
+      read_timeout 3600s
+      write_timeout 3600s
+      dial_timeout 30s
+    }
+  }
+  reverse_proxy /_synapse/client/* homeserver:8448
+  reverse_proxy /_synapse/admin/* homeserver:8448
+}

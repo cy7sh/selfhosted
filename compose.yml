@@ -1,5 +1,6 @@
 networks:
   default:
+    name: labnet
     driver: bridge
     enable_ipv6: true
     ipam:
@@ -35,7 +36,6 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy-config:/config
       - ./caddy-data:/data
-      - ./website/public:/blogroot
     environment:
       LOG_FILE: "/data/access.log"
 
@@ -61,7 +61,8 @@ services:
       - /home/cy/adguardhome/conf:/opt/adguardhome/conf
 
   linkding:
-    image: sissbruecker/linkding:latest-plus
+    build:
+      context: ./linkding
     container_name: linkding
     restart: always
     environment:
