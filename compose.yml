@@ -2,166 +2,61 @@ networks:
   default:
     name: labnet
     driver: bridge
-    enable_ipv6: true
-    ipam:
-      config:
-        - subnet: fdae:7bc2:9d65:c579::/64
-        - subnet: 172.28.0.0/16
 
 services:
-  vaultwarden:
-    image: vaultwarden/server
-    container_name: vaultwarden
-    restart: always
-    environment:
-      DOMAIN: "https://pass.cy.sh"
-      ADMIN_TOKEN: ${VAULTWARDEN_ADMIN_TOKEN}
-      LOG_FILE: /data/vaultwarden.log
-      TZ: America/Toronto
-      PUSH_ENABLED: true
-      PUSH_INSTALLATION_ID: ${PUSH_INSTALLATION_ID}
-      PUSH_INSTALLATION_KEY: ${PUSH_INSTALLATION_KEY}
-    volumes:
-      - /vw-data:/data
-
-  caddy:
-    image: caddy:2
-    container_name: caddy
-    restart: always
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:8
+    container_name: forgejo
+    restart: unless-stopped
     ports:
-      - 80:80
-      - 443:443
-      - 443:443/udp
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy-config:/config
-      - ./caddy-data:/data
+      - 3000:3000
     environment:
-      LOG_FILE: "/data/access.log"
+      USER_UID: 1000
+      USER_GID: 1000
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: host.docker.internal:5432
+      FORGEJO__database__NAME: forgejo
+      FORGEJO__database__USER: forgejo
+      FORGEJO__database__PASSWD: forgejo
+    volumes:
+      - /opt/forgejo/:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  linkding:
+    build:
+      context: ./linkding
+    container_name: linkding
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    environment:
+      LD_LOG_X_FORWARDED_FOR: True
+      LD_DB_ENGINE: postgres
+      LD_DB_PASSWORD: linkding
+      LD_DB_HOST: host.docker.internal
+    volumes:
+      - /opt/linkding:/etc/linkding/data
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   freshrss:
     image: freshrss/freshrss:latest
     container_name: freshrss
-    restart: always
+    restart: unless-stopped
+    ports:
+      - 8080:80
     environment:
       TZ: America/Toronto
       SERVER_DNS: rss.cy7.sh
     volumes:
       - /opt/freshrss/data:/var/www/FreshRSS/data
       - /opt/freshrss/extensions:/var/www/FreshRSS/extensions
-
-  adguard:
-    image: adguard/adguardhome
-    container_name: adguard
-    restart: always
-    environment:
-      TZ: America/Toronto
-    volumes:
-      - /home/cy/adguardhome/work:/opt/adguardhome/work
-      - /home/cy/adguardhome/conf:/opt/adguardhome/conf
-
-  linkding:
-    build:
-      context: ./linkding
-    container_name: linkding
-    restart: always
-    environment:
-      LD_LOG_X_FORWARDED_FOR: True
-    volumes:
-      - /opt/linkding/data:/etc/linkding/data
-    ulimits:
-      nofile:
-        soft: 1048576
-        hard: 1048576
-
-  immich-server:
-    container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
-    volumes:
-      - ${IMMICH_UPLOAD_LOCATION}:/usr/src/app/upload
-      - ${IMMICH_THUMBS_LOCATION}:/usr/src/app/upload/thumbs
-      - ${IMMICH_ENCODED_VIDEO_LOCATION}:/usr/src/app/upload/encoded-video
-      - ${IMMICH_PROFILE_LOCATION}:/usr/src/app/upload/profile
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      DB_PASSWORD: postgres
-      DB_USERNAME: postgres
-      DB_DATABASE_NAME: immich
-      DB_HOSTNAME: immich_db
-      # IMMICH_WORKERS_INCLUDE: api
-    depends_on:
-      - immich_db
-      - redis
-    restart: always
-    healthcheck:
-      disable: false
-
-  redis:
-    container_name: immich_redis
-    image: docker.io/redis:6.2-alpine@sha256:2ba50e1ac3a0ea17b736ce9db2b0a9f6f8b85d4c27d5f5accc6a416d8f42c6d5
-    healthcheck:
-      test: redis-cli ping || exit 1
-    restart: always
-
-  immich_db:
-    container_name: immich_db
-    image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: immich
-      POSTGRES_INITDB_ARGS: '--data-checksums'
-    volumes:
-      - ${IMMICH_DB_DATA_LOCATION}:/var/lib/postgresql/data
-    healthcheck:
-      test: pg_isready --dbname='immich_db' --username='postgres' || exit 1; Chksum="$$(psql --dbname='immich_db' --username='postgres' --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
-      interval: 5m
-      start_interval: 30s
-      start_period: 5m
-    command:
-      [
-        'postgres',
-        '-c',
-        'shared_preload_libraries=vectors.so',
-        '-c',
-        'search_path="$$user", public, vectors',
-        '-c',
-        'logging_collector=on',
-        '-c',
-        'max_wal_size=2GB',
-        '-c',
-        'shared_buffers=512MB',
-        '-c',
-        'wal_compression=on',
-      ]
-    restart: always
-
-  forgejo:
-    image: codeberg.org/forgejo/forgejo:8
-    container_name: forgejo
-    environment:
-      USER_UID: 1000
-      USER_GID: 1000
-      FORGEJO__database__DB_TYPE: postgres
-      FORGEJO__database__HOST: forgejo_db:5432
-      FORGEJO__database__NAME: forgejo
-      FORGEJO__database__USER: forgejo
-      FORGEJO__database__PASSWD: forgejo
-    restart: always
-    volumes:
-      - /opt/forgejo/data:/data
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    depends_on:
-      - forgejo_db
-
-  forgejo_db:
-    image: postgres:14
-    container_name: forgejo_db
-    restart: always
-    environment:
-      POSTGRES_USER: forgejo
-      POSTGRES_PASSWORD: forgejo
-      POSTGRES_DB: forgejo
-    volumes:
-      - /opt/forgejo/postgres:/var/lib/postgresql/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
