@@ -8,6 +8,8 @@ services:
         image: matrixconduit/matrix-conduit:latest
         container_name: conduit
         restart: unless-stopped
+        ports:
+          - 8448:8448
         volumes:
             - /opt/conduit/db:/var/lib/matrix-conduit/
         environment:

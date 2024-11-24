@@ -9,10 +9,11 @@ services:
     container_name: forgejo
     restart: unless-stopped
     ports:
-      - 3000:3000
+      - 127.0.0.1:3000:3000
+      - 127.0.0.1:2222:22
     environment:
-      USER_UID: 1000
-      USER_GID: 1000
+      USER_UID: 1001
+      USER_GID: 100
       FORGEJO__database__DB_TYPE: postgres
       FORGEJO__database__HOST: host.docker.internal:5432
       FORGEJO__database__NAME: forgejo
@@ -22,6 +23,7 @@ services:
       - /opt/forgejo/:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      - /home/git/.ssh:/data/git/.ssh
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -60,3 +62,20 @@ services:
       - /opt/freshrss/extensions:/var/www/FreshRSS/extensions
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  vaultwarden:
+    image: vaultwarden/server
+    container_name: vaultwarden
+    restart: unless-stopped
+    ports:
+      - 8081:80
+    environment:
+      DOMAIN: "https://pass.cy.sh"
+      ADMIN_TOKEN: ${VAULTWARDEN_ADMIN_TOKEN}
+      LOG_FILE: /data/vaultwarden.log
+      TZ: America/Toronto
+      PUSH_ENABLED: true
+      PUSH_INSTALLATION_ID: ${PUSH_INSTALLATION_ID}
+      PUSH_INSTALLATION_KEY: ${PUSH_INSTALLATION_KEY}
+    volumes:
+      - /vw-data:/data

@@ -12,7 +12,6 @@ services:
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - ${THUMBS_LOCATION}:/usr/src/app/upload/thumbs
-      - ${ENCODED_VIDEO_LOCATION}:/usr/src/app/upload/encoded-video
       - ${PROFILE_LOCATION}:/usr/src/app/upload/profile
       - /etc/localtime:/etc/localtime:ro
     env_file:
@@ -65,3 +64,20 @@ services:
         'wal_compression=on',
       ]
     restart: always
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    # extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
+    #   file: hwaccel.ml.yml
+    #   service: cpu # set to one of [armnn, cuda, openvino, openvino-wsl] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    volumes:
+      - model-cache:/cache
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      disable: false
+
+volumes:
+  model-cache:

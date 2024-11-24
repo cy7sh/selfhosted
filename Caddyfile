@@ -1,113 +1,31 @@
-{
-	servers {
-		trusted_proxies static private_ranges
-	}
-}
-
-pass.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-
-	encode zstd gzip
-
-	reverse_proxy vaultwarden:80 {
-		header_up X-Real-IP {client_ip}
-	}
-}
-
-dns.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	encode zstd gzip
-
-	reverse_proxy adguard:80 {
-		header_up X-Real-IP {client_ip}
-	}
-}
-
-link.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	encode zstd gzip
-
-	reverse_proxy linkding:9090 {
-		header_up X-Forwarded-For {client_ip}
-	}
-}
-
-rss.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	encode zstd gzip
-
-	reverse_proxy freshrss:80 {
-		header_up X-Real-IP {client_ip}
-	}
-}
-
-photos.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	encode zstd gzip
-
-	reverse_proxy immich-server:2283 {
-		header_up X-Real-IP {client_ip}
-	}
+anki.cy7.sh {
+  reverse_proxy localhost:27701
 }
 
 git.cy7.sh {
-	log {
-		level INFO
-		output file {$LOG_FILE} {
-			roll_size 10MB
-			roll_keep 10
-		}
-	}
-	encode zstd gzip
+  reverse_proxy localhost:3000
+}
 
-	reverse_proxy forgejo:3000 {
-		header_up X-Real-IP {client_ip}
-	}
+link.cy7.sh {
+  reverse_proxy localhost:9090
+}
+
+rss.cy7.sh {
+  reverse_proxy localhost:8080
+}
+
+photos.cy7.sh {
+  reverse_proxy localhost:2283
 }
 
 matrix.cy7.sh {
-  reverse_proxy /_matrix/* homeserver:8448 {
-    header_up Host {host}
-    header_up X-Real-IP {client_ip}
-    header_up X-Forwarded-For {client_ip}
-    header_up X-Forwarded-Proto {scheme}
-    transport http {
-      read_buffer 8192
-      read_timeout 3600s
-      write_timeout 3600s
-      dial_timeout 30s
-    }
-  }
-  reverse_proxy /_synapse/client/* homeserver:8448
-  reverse_proxy /_synapse/admin/* homeserver:8448
+  reverse_proxy localhost:8448
+}
+
+t.cy7.sh {
+  reverse_proxy localhost:9091
+}
+
+pass.cy7.sh {
+  reverse_proxy localhost:8081
 }
