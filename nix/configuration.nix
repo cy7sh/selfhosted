@@ -161,7 +161,7 @@ in {
 
   services.borgbackup.jobs = {
     crashRsync = {
-      paths = [ "/root" "/home" "/var/backup" "/var/lib" "/opt" "/etc" "/vw-data" ];
+      paths = [ "/root" "/home" "/var/backup" "/var/lib" "/var/log" "/opt" "/etc" "/vw-data" ];
       exclude = [ "**/.cache" "**/node_modules" "**/cache" "**/Cache" "/var/lib/docker" ];
       repo = "de3911@de3911.rsync.net:borg/crash";
       encryption = {
@@ -181,5 +181,18 @@ in {
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  services.tor = {
+    enable = true;
+    openFirewall = true;
+    relay = {
+      enable = true;
+      role = "relay";
+    };
+    settings = {
+      ORPort = 9001;
+      Nickname = "chunk";
+    };
+  };
 }
 

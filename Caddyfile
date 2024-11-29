@@ -29,3 +29,7 @@ t.cy7.sh {
 pass.cy7.sh {
   reverse_proxy localhost:8081
 }
+
+dns.cy7.sh {
+  reverse_proxy localhost:8082
+}
