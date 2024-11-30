@@ -64,23 +64,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  vaultwarden:
-    image: vaultwarden/server
-    container_name: vaultwarden
-    restart: unless-stopped
-    ports:
-      - 8081:80
-    environment:
-      DOMAIN: "https://pass.cy.sh"
-      ADMIN_TOKEN: ${VAULTWARDEN_ADMIN_TOKEN}
-      LOG_FILE: /data/vaultwarden.log
-      TZ: America/Toronto
-      PUSH_ENABLED: true
-      PUSH_INSTALLATION_ID: ${PUSH_INSTALLATION_ID}
-      PUSH_INSTALLATION_KEY: ${PUSH_INSTALLATION_KEY}
-    volumes:
-      - /vw-data:/data
-
   adguard:
     image: adguard/adguardhome
     container_name: adguard
