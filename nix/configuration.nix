@@ -32,6 +32,16 @@ in {
       ip saddr 172.18.0.0/16 tcp dport 5432 accept
     '';
   };
+  networking.interfaces.ens18 = {
+    ipv6.addresses = [{
+      address = "2a0f:85c1:840:2bfb::1";
+      prefixLength = 64;
+    }];
+  };
+  networking.defaultGateway6 = {
+    address = "2a0f:85c1:840::1";
+    interface = "ens18";
+  };
 
   time.timeZone = "America/Toronto";
 

@@ -2,7 +2,7 @@ anki.cy7.sh {
   reverse_proxy localhost:27701
 }
 
-git.cy7.sh {
+git.cy7.sh, git.cything.io {
   reverse_proxy localhost:3000
 }
 
@@ -18,12 +18,8 @@ photos.cy7.sh {
   reverse_proxy localhost:2283
 }
 
-matrix.cy7.sh {
+matrix.cy7.sh, chat.cything.io {
   reverse_proxy localhost:8448
-}
-
-t.cy7.sh {
-  reverse_proxy localhost:9091
 }
 
 pass.cy7.sh {
