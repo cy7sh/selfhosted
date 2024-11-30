@@ -86,7 +86,6 @@ in {
     restic
     htop
     btop
-    iftop
     file
     sops
     age
