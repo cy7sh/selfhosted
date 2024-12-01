@@ -3,3 +3,4 @@ caddy-data
 .env
 website
 *.log
+Caddyfile
