@@ -29,3 +29,7 @@ pass.cy7.sh {
 dns.cy7.sh {
   reverse_proxy localhost:8082
 }
+
+ntfy.cything.io {
+  reverse_proxy localhost:8083
+}

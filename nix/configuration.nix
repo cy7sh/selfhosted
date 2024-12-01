@@ -15,6 +15,7 @@ in {
   sops.age.keyFile = "/root/.config/sops/age/keys.txt";
   sops.secrets."borg/crash" = { };
   sops.secrets."anki/cy" = { };
+  sops.secrets."ntfy" = { };
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
@@ -188,6 +189,11 @@ in {
       extraCreateArgs = [ "--stats" ];
       # warnings are often not that serious
       failOnWarnings = false;
+      postHook = ''
+        ${pkgs.curl}/bin/curl -u $(cat /run/secrets/ntfy) -d "chunk: backup completed with exit code: $exitStatus
+        $(journalctl -u borgbackup-job-crashRsync.service|tail -n 5)" \
+        https://ntfy.cything.io/chunk
+      '';
     };
   };
 
@@ -215,6 +221,17 @@ in {
       ROCKET_PORT = "8081";
       DATA_FOLDER = "/vw-data";
       DATABASE_URL = "postgresql://vaultwarden:vaultwarden@127.0.0.1:5432/vaultwarden";
+    };
+  };
+
+  services.ntfy-sh = {
+    enable = true;
+    settings = {
+      listen-http = "127.0.0.1:8083";
+      base-url = "https://ntfy.cything.io";
+      upstream-base-url = "https://ntfy.sh";
+      auth-default-access = "deny-all";
+      behind-proxy = true;
     };
   };
 }
