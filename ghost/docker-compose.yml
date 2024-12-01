@@ -1,0 +1,31 @@
+networks:
+  default:
+    name: ghostnet
+    driver: bridge
+
+services:
+  ghost:
+    container_name: ghost
+    image: ghost:5-alpine
+    restart: unless-stopped
+    ports:
+      - 8084:2368
+    environment:
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: example
+      database__connection__database: ghost
+      url: https://cything.io
+      NODE_ENV: production
+    volumes:
+      - /opt/ghost/data:/var/lib/ghost/content
+
+  db:
+    container_name: ghost_db
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - /opt/ghost/db:/var/lib/mysql
