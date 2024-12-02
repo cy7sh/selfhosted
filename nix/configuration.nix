@@ -14,8 +14,8 @@ in {
   sops.defaultSopsFile = ./secrets/secrets.yaml;
   sops.age.keyFile = "/root/.config/sops/age/keys.txt";
   sops.secrets."borg/crash" = { };
-  sops.secrets."anki/cy" = { };
   sops.secrets."ntfy" = { };
+  sops.secrets."rclone" = { };
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
@@ -120,17 +120,6 @@ in {
   programs.gnupg.agent.enable = true;
   programs.git.enable = true;
 
-  services.anki-sync-server = {
-    enable = true;
-    port = 27701;
-    users = [
-      {
-        username = "cy";
-        passwordFile = /run/secrets/anki/cy;
-      }
-    ];
-  };
-
   services.caddy = {
     enable = true;
     configFile = ../Caddyfile;
@@ -234,5 +223,47 @@ in {
       behind-proxy = true;
     };
   };
+
+  systemd.services.immich-mount = {
+    enable = true;
+    description = "Mount the immich data remote";
+    after = [ "network-online.target" ];
+    requires = [ "network-online.target" ];
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      Type = "notify";
+      ExecStartPre = "/usr/bin/env mkdir -p /mnt/photos";
+      ExecStart = "${pkgs.rclone}/bin/rclone mount --config /home/yt/.config/rclone/rclone.conf --transfers=32 --dir-cache-time 720h --poll-interval 0 --vfs-cache-mode writes photos: /mnt/photos ";
+      ExecStop = "/bin/fusermount -u /mnt/photos";
+      EnvironmentFile = "/run/secrets/rclone";
+    };
+  };
+
+  services.invidious = {
+    enable = true;
+    address = "127.0.0.1";
+    port = 8085;
+    domain = "iv.cything.io";
+    sig-helper.enable = true;
+    settings = {
+      https_only = true;
+      external_port = 443;
+      use_pubsub_feeds = true;
+      po_token = "MnSbI765VE0d5ZsbJcxoMahM3ib0oEtnCYxQ1mDBnWKdkTSrg5voHFUakyhe68xOJvRZ1iX-qed9l0QXdeQ72AQcuhHa0vmStNFLdhHW9UMizWTxrKk5mm47MceQkUtKO_NUnKJ1NBSBxxZkRcm-TJO5sOY1eQ==";
+      visitor_data = "CgstdXk4djZ5UlJYbyikq7S6BjIKCgJVUxIEGgAgNQ%3D%3D";
+    };
+  };
+
+  services.redlib = {
+    enable = true;
+    port = 8086;
+    address = "127.0.0.1";
+    settings = {
+      # settings are just env vars
+      REDLIB_ENABLE_RSS = true;
+    };
+  };
+
+  programs.fuse.userAllowOther = true;
 }
 
