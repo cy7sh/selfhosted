@@ -188,19 +188,6 @@ in {
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  services.tor = {
-    enable = true;
-    openFirewall = true;
-    relay = {
-      enable = true;
-      role = "relay";
-    };
-    settings = {
-      ORPort = 9001;
-      Nickname = "chunk";
-    };
-  };
-
   services.vaultwarden = {
     enable = true;
     dbBackend = "postgresql";
