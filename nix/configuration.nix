@@ -13,9 +13,12 @@ in {
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
   sops.age.keyFile = "/root/.config/sops/age/keys.txt";
-  sops.secrets."borg/crash" = { };
-  sops.secrets."ntfy" = { };
-  sops.secrets."rclone" = { };
+  sops.secrets = {
+    "borg/crash" = { };
+    "ntfy" = { };
+    "rclone" = { };
+    "vaultwarden" = { };
+  };
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
@@ -163,7 +166,7 @@ in {
   services.borgbackup.jobs = {
     crashRsync = {
       paths = [ "/root" "/home" "/var/backup" "/var/lib" "/var/log" "/opt" "/etc" "/vw-data" ];
-      exclude = [ "**/.cache" "**/node_modules" "**/cache" "**/Cache" "/var/lib/docker" ];
+      exclude = [ "**/.cache" "**/node_modules" "**/cache" "**/Cache" "/var/lib/docker/overlay*" ];
       repo = "de3911@de3911.rsync.net:borg/crash";
       encryption = {
         mode = "repokey-blake2";
@@ -174,7 +177,7 @@ in {
         BORG_REMOTE_PATH = "borg1";
       };
       compression = "auto,zstd";
-      startAt = "hourly";
+      startAt = "daily";
       extraCreateArgs = [ "--stats" ];
       # warnings are often not that serious
       failOnWarnings = false;
@@ -191,7 +194,7 @@ in {
   services.vaultwarden = {
     enable = true;
     dbBackend = "postgresql";
-    environmentFile = "/var/lib/vaultwarden.env";
+    environmentFile = "/run/secrets/vaultwarden";
     config = {
       ROCKET_ADDRESS = "127.0.0.1";
       ROCKET_PORT = "8081";
@@ -262,6 +265,19 @@ in {
     settings = {
       # settings are just env vars
       REDLIB_ENABLE_RSS = true;
+    };
+  };
+
+  services.tor = {
+    enable = true;
+    openFirewall = true;
+    relay = {
+      enable = true;
+      role = "relay";
+    };
+    settings = {
+      ORPort = 9001;
+      Nickname = "chunk";
     };
   };
 
