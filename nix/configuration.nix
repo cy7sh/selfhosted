@@ -243,31 +243,6 @@ in {
     };
   };
 
-  services.invidious = {
-    enable = true;
-    address = "127.0.0.1";
-    port = 8085;
-    domain = "iv.cything.io";
-    sig-helper.enable = true;
-    settings = {
-      https_only = true;
-      external_port = 443;
-      use_pubsub_feeds = true;
-      po_token = "MnSbI765VE0d5ZsbJcxoMahM3ib0oEtnCYxQ1mDBnWKdkTSrg5voHFUakyhe68xOJvRZ1iX-qed9l0QXdeQ72AQcuhHa0vmStNFLdhHW9UMizWTxrKk5mm47MceQkUtKO_NUnKJ1NBSBxxZkRcm-TJO5sOY1eQ==";
-      visitor_data = "CgstdXk4djZ5UlJYbyikq7S6BjIKCgJVUxIEGgAgNQ%3D%3D";
-    };
-  };
-
-  services.redlib = {
-    enable = true;
-    port = 8086;
-    address = "127.0.0.1";
-    settings = {
-      # settings are just env vars
-      REDLIB_ENABLE_RSS = true;
-    };
-  };
-
   services.tor = {
     enable = true;
     openFirewall = true;
