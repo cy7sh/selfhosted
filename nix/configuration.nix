@@ -76,6 +76,7 @@ in {
       rust-analyzer
       pgloader
       sqlite
+      yt-dlp
     ];
   };
   users.users.root.openssh.authorizedKeys.keys =
@@ -244,19 +245,6 @@ in {
       ExecStart = "${pkgs.rclone}/bin/rclone mount --config /home/yt/.config/rclone/rclone.conf --uid 33 --gid 0 --allow-other --file-perms 0770 --dir-perms 0770 --transfers=32 rsyncnet:nextcloud /mnt/nextcloud";
       ExecStop = "/bin/fusermount -u /mnt/nextcloud";
       EnvironmentFile = "/run/secrets/rclone";
-    };
-  };
-
-  services.tor = {
-    enable = true;
-    openFirewall = true;
-    relay = {
-      enable = true;
-      role = "relay";
-    };
-    settings = {
-      ORPort = 9001;
-      Nickname = "chunk";
     };
   };
 
