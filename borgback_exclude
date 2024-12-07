@@ -1,7 +1,0 @@
-*.git
-*.cache
-*.local
-*.docker
-*cache
-*Cache
-*node_modules
