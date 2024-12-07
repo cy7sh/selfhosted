@@ -1,6 +1,4 @@
 caddy-config
 caddy-data
 .env
-website
 *.log
-Caddyfile

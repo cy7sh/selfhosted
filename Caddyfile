@@ -1,0 +1,54 @@
+{
+  acme_ca https://acme.zerossl.com/v2/DV90
+  acme_eab {
+    key_id {$EAB_KEY_ID}
+    mac_key {$EAB_MAC_KEY}
+  }
+}
+
+anki.cy7.sh {
+  reverse_proxy localhost:27701
+}
+
+git.cy7.sh, git.cything.io {
+  reverse_proxy localhost:3000
+}
+
+rss.cy7.sh {
+  reverse_proxy localhost:8080
+}
+
+photos.cy7.sh {
+  reverse_proxy localhost:2283
+}
+
+matrix.cy7.sh, chat.cything.io {
+  reverse_proxy localhost:8448
+}
+
+pass.cy7.sh {
+  reverse_proxy localhost:8081
+}
+
+dns.cy7.sh {
+  reverse_proxy localhost:8082
+}
+
+ntfy.cything.io {
+  reverse_proxy localhost:8083
+}
+
+cything.io {
+  uri strip_prefix /blog
+  reverse_proxy /.well-known/matrix/* localhost:8448
+  reverse_proxy /_matrix/* localhost:8448
+  reverse_proxy localhost:8084
+}
+
+www.cything.io {
+  redir https://cything.io{uri} permanent
+}
+
+cloud.cything.io {
+  reverse_proxy localhost:11000
+}

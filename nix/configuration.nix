@@ -18,6 +18,7 @@ in {
     "ntfy" = { };
     "rclone" = { };
     "vaultwarden" = { };
+    "caddy" = { };
   };
 
   boot.loader.grub.enable = true;
@@ -126,6 +127,9 @@ in {
   services.caddy = {
     enable = true;
     configFile = ../Caddyfile;
+  };
+  systemd.services.caddy.serviceConfig = {
+    EnvironmentFile = "/run/secrets/caddy";
   };
 
   services.postgresql = {
