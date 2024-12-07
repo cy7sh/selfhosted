@@ -257,5 +257,11 @@ in {
   };
 
   programs.fuse.userAllowOther = true;
+
+  nix.optimise = {
+    automatic = true;
+    dates = [ "03:45" ];
+  };
+  nix.settings.auto-optimise-store = true;
 }
 
