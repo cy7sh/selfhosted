@@ -74,8 +74,6 @@ in {
       bash-language-server
       llvmPackages_19.clang-tools
       rust-analyzer
-      pgloader
-      sqlite
       yt-dlp
     ];
   };
@@ -95,8 +93,6 @@ in {
     wget
     curl
     tree
-    neofetch
-    gnupg
     python3Full
     tmux
     borgbackup
