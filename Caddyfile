@@ -52,3 +52,7 @@ www.cything.io {
 cloud.cything.io {
   reverse_proxy localhost:11000
 }
+
+pad.cything.io {
+  reverse_proxy localhost:8085
+}
