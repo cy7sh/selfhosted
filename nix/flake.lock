@@ -18,7 +18,8 @@
     "root": {
       "inputs": {
         "nixpkgs": "nixpkgs",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "testpkgs": "testpkgs"
       }
     },
     "sops-nix": {
@@ -38,6 +39,22 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "testpkgs": {
+      "locked": {
+        "lastModified": 1733714684,
+        "narHash": "sha256-S3vZM9+mAfyDsk+DivQmFuylDm1de4lHPlJo2N59qoQ=",
+        "owner": "cything",
+        "repo": "nixpkgs",
+        "rev": "308ebe10f73ce21ef010d0e6524db5e99590515c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cything",
+        "ref": "caddy-environmentfile",
+        "repo": "nixpkgs",
         "type": "github"
       }
     }

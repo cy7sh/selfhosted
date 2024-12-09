@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
   fake-gitea = pkgs.writeShellScriptBin "gitea" ''
@@ -6,9 +6,11 @@ ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$S
   '';
 
 in {
+  disabledModules = [ "services/web-servers/caddy/default.nix" ];
   imports =
     [
       ./hardware-configuration.nix
+      "${inputs.testpkgs}/nixos/modules/services/web-servers/caddy"
     ];
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
@@ -127,10 +129,11 @@ in {
   services.caddy = {
     enable = true;
     configFile = ../Caddyfile;
+    environmentFile = "/run/secrets/caddy";
   };
-  systemd.services.caddy.serviceConfig = {
-    EnvironmentFile = "/run/secrets/caddy";
-  };
+  # systemd.services.caddy.serviceConfig = {
+  #   EnvironmentFile = "/run/secrets/caddy";
+  # };
 
   services.postgresql = {
     enable = true;
