@@ -130,6 +130,7 @@ in {
     enable = true;
     configFile = ../Caddyfile;
     environmentFile = "/run/secrets/caddy";
+    logFormat = lib.mkForce "level INFO";
   };
   # systemd.services.caddy.serviceConfig = {
   #   EnvironmentFile = "/run/secrets/caddy";
