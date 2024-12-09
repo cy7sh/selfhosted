@@ -2,7 +2,7 @@
 
 let
   fake-gitea = pkgs.writeShellScriptBin "gitea" ''
-ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" $0 $@"
+ssh -p 2222 -o StrictHostKeyChecking=no git@127.0.0.1 "SSH_ORIGINAL_COMMAND=\"$SSH_ORIGINAL_COMMAND\" /usr/local/bin/gitea $@"
   '';
 
 in {
@@ -75,6 +75,7 @@ in {
       llvmPackages_19.clang-tools
       rust-analyzer
       yt-dlp
+      gnumake
     ];
     shell = pkgs.zsh;
   };
