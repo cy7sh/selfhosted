@@ -27,27 +27,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  linkding:
-    build:
-      context: ./linkding
-    container_name: linkding
-    restart: unless-stopped
-    ports:
-      - 9090:9090
-    environment:
-      LD_LOG_X_FORWARDED_FOR: True
-      LD_DB_ENGINE: postgres
-      LD_DB_PASSWORD: linkding
-      LD_DB_HOST: host.docker.internal
-    volumes:
-      - /opt/linkding:/etc/linkding/data
-    ulimits:
-      nofile:
-        soft: 1048576
-        hard: 1048576
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
   freshrss:
     image: freshrss/freshrss:latest
     container_name: freshrss
@@ -75,3 +54,19 @@ services:
     volumes:
       - /opt/adguard/work:/opt/adguardhome/work
       - /opt/adguard/conf:/opt/adguardhome/conf
+
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest
+    container_name: linkwarden
+    restart: unless-stopped
+    ports: 
+      - 8086:3000
+    volumes:
+      - /opt/linkwarden:/data/data
+    environment:
+      DATABASE_URL: postgresql://linkwarden:linkwarden@host.docker.internal:5432/linkwarden
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: https://link.cything.io/api/v1/auth
+      NEXT_PUBLIC_DISABLE_REGISTRATION: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

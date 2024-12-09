@@ -142,9 +142,9 @@ in {
     enableTCPIP = true;
     ensureDatabases = [
       "forgejo"
-      "linkding"
       "freshrss"
       "hedgedoc"
+      "linkwarden"
     ];
     ensureUsers = [
       {
@@ -152,7 +152,7 @@ in {
         ensureDBOwnership = true;
       }
       {
-        name = "linkding";
+        name = "linkwarden";
         ensureDBOwnership = true;
       }
       {
