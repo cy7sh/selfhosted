@@ -76,10 +76,10 @@ in {
       rust-analyzer
       yt-dlp
     ];
+    shell = pkgs.zsh;
   };
   users.users.root.openssh.authorizedKeys.keys =
       [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdhAQYy0+vS+QmyCd0MAbqbgzyMGcsuuFyf6kg2yKge yt@ytlinux" ];
-  users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
 
   users.users.git = {
