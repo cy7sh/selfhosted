@@ -60,3 +60,7 @@ pad.cything.io {
 link.cything.io {
   reverse_proxy localhost:8086
 }
+
+red.cything.io {
+  reverse_proxy localhost:8087
+}
