@@ -54,19 +54,3 @@ services:
     volumes:
       - /opt/adguard/work:/opt/adguardhome/work
       - /opt/adguard/conf:/opt/adguardhome/conf
-
-  linkwarden:
-    image: ghcr.io/linkwarden/linkwarden:latest
-    container_name: linkwarden
-    restart: unless-stopped
-    ports: 
-      - 8086:3000
-    volumes:
-      - /opt/linkwarden:/data/data
-    environment:
-      DATABASE_URL: postgresql://linkwarden:linkwarden@host.docker.internal:5432/linkwarden
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      NEXTAUTH_URL: https://link.cything.io/api/v1/auth
-      NEXT_PUBLIC_DISABLE_REGISTRATION: true
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
