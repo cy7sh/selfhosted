@@ -287,7 +287,8 @@ in {
     address = "127.0.0.1";
     settings = {
       # settings are just env vars
-      REDLIB_ENABLE_RSS = true;
+      REDLIB_ENABLE_RSS = "on";
+      REDLIB_ROBOTS_DISABLE_INDEXING = "on";
     };
   };
 }

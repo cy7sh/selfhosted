@@ -7,7 +7,7 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    testpkgs.url = "github:cything/nixpkgs/caddy-environmentfile";
+    testpkgs.url = "github:NixOS/nixpkgs/248081c4729259c3add830d502779c5d04cbe074";
   };
 
   outputs = { self, nixpkgs, sops-nix, ... }@inputs:
