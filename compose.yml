@@ -42,17 +42,3 @@ services:
       - /opt/freshrss/extensions:/var/www/FreshRSS/extensions
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
-  adguard:
-    image: adguard/adguardhome
-    container_name: adguard
-    restart: unless-stopped
-    ports:
-      - 8082:80
-      - 53:53
-      - 853:853
-    environment:
-      TZ: America/Toronto
-    volumes:
-      - /opt/adguard/work:/opt/adguardhome/work
-      - /opt/adguard/conf:/opt/adguardhome/conf
